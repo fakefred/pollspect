@@ -89,6 +89,7 @@ def poll_poll(key: str) -> str:
         move_to_archive(key)
         return 'expired'
 
+    # save as {'snapshot': {<datetime>: [0, 1, 2, 3]}}
     subscriptions[key]['snapshots'][nowstring()] = [opt['votes_count']
                                                     for opt in poll['options']]
     update_json()
@@ -96,11 +97,13 @@ def poll_poll(key: str) -> str:
 
 
 def poll_all_polls():
+    # helper method
     for key in subscriptions.keys():
         poll_poll(key)
 
 
 def analyze_poll(key: str):
+    # analyze a certain poll for frontend visualization
     if not key in subscriptions:
         return 'not subscribed'
 

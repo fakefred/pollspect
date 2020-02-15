@@ -10,6 +10,7 @@ from json import dumps
 
 @view_config(route_name='index')
 def index(req):
+    # HACK opens static html and serves client
     return Response(open('./static/index.html', 'r').read())
 
 

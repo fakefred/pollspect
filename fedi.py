@@ -17,15 +17,18 @@ def infer_api_url(url: str) -> str:
         # also mastodon
         return 'https://' + slices[0] + '/api/v1/statuses/' + slices[2]
     elif len(slices) > 2 and slices[1] == 'notice' and slices[2].isalnum():
-        # pleroma
+        # pleroma: not supported, I guess?
         pass
     return 'invalid'
 
 
 def get_instance_and_id_from_status_url(url: str) -> tuple:
+    # `instance` also doubles as a status string
+    # in case an error occurs
     api_url = infer_api_url(url)
     if not api_url == 'invalid':
         try:
+            # GET api_url
             res = requests.get(api_url).json()
             if 'poll' in res and res['poll']:
                 return (
@@ -35,7 +38,7 @@ def get_instance_and_id_from_status_url(url: str) -> tuple:
         except Exception:
             print('Error occurred while GET\'ing ' + api_url)
             return ('error', None)
-    return ('invalid', None)  # invalid
+    return ('invalid', None)
 
 
 def get_poll_by_id(instance: str, id: int) -> dict:
