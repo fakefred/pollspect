@@ -115,17 +115,20 @@ def analyze_poll(key: str):
         'instance': poll['instance'],
         'id': poll['id'],
         'multiple': poll['multiple'],
-        'choices': [{
+        'snapshots': [],
+        'choices': [{  # stuff in titles
             'title': opt,
-            'points': []
+            'votes': []
         } for opt in poll['choices']]
     }
 
+    # stuff in snapshot time and votes
     for timestr, votes in poll['snapshots'].items():
-        delta_t = (parser.parse(timestr) -
-                   parser.parse(poll['subscribed_at'])).seconds
+        stats['snapshots'].append(
+            (parser.parse(timestr) -
+             parser.parse(poll['subscribed_at'])).seconds)
         for idx, count in enumerate(votes):
-            stats['choices'][idx]['points'].append((delta_t, count))
+            stats['choices'][idx]['votes'].append(count)
 
     return stats
 

@@ -14,63 +14,31 @@ const OPAQUE = [
   "rgba(255, 159, 64, 1)"
 ];
 
-const TRANSLUSCENT = [
-  "rgba(255, 99, 132, 0.2)",
-  "rgba(54, 162, 235, 0.2)",
-  "rgba(255, 206, 86, 0.2)",
-  "rgba(75, 192, 192, 0.2)",
-  "rgba(153, 102, 255, 0.2)",
-  "rgba(255, 159, 64, 0.2)"
-];
+const parseSeconds = s => {
+  d = Math.floor(s / 86400);
+  h = Math.floor(s / 3600) - d * 24;
+  m = Math.floor(s / 60) - d * 1440 - h * 60;
+  s = s % 60;
+  return `${d}d, ${h}:${m < 10 ? `0${m}` : m}:${s < 10 ? `0${s}` : s}`;
+};
 
-/* sample response json
+/* sample response json*/
 const json = {
-  generated_at: "2020-02-15 04:55:17",
-  expires_in: "6 days, 9:17:27",
+  generated_at: "2020-02-15 07:47:52",
+  expires_in: "6 days, 6:24:53",
   url: "https://mastodon.technology/web/statuses/103657607384494793",
   instance: "mastodon.technology",
   id: 21344,
   multiple: false,
+  snapshots: [4, 8438, 8450, 8471, 15313, 15439, 15557, 15681, 16064],
   choices: [
-    {
-      title: "Cate :cate:",
-      points: [
-        [4, 12],
-        [5, 15],
-        [6, 16],
-        [8, 18]
-      ]
-    },
-    {
-      title: "Scremcat :scremcat:",
-      points: [
-        [4, 13],
-        [5, 16],
-        [8, 17],
-        [9, 19]
-      ]
-    },
-    {
-      title: "Cringingcat :cringingcat:",
-      points: [
-        [4, 12],
-        [5, 14],
-        [7, 15],
-        [8, 17]
-      ]
-    },
-    {
-      title: "Freddiecat :freddiecat:",
-      points: [
-        [4, 7],
-        [6, 12],
-        [8, 14],
-        [9, 16]
-      ]
-    }
+    { title: "Cate :cate:", votes: [1, 1, 1, 1, 3, 3, 3, 3, 3] },
+    { title: "Scremcat :scremcat:", votes: [1, 1, 1, 1, 1, 1, 1, 1, 1] },
+    { title: "Cringingcat :cringingcat:", votes: [1, 1, 1, 1, 1, 1, 1, 1, 1] },
+    { title: "Freddiecat :freddiecat:", votes: [0, 0, 0, 0, 1, 1, 1, 1, 1] }
   ]
 };
-*/
+/**/
 
 const requestAnalysis = () => {
   console.log("requesting");
@@ -98,22 +66,23 @@ const makeChart = json => {
   let datasets = [];
   for (let idx = 0; idx < json.choices.length; idx++) {
     const opt = json.choices[idx];
-    let points = [];
-    for (let i = 0; i < opt.points.length; i++) {
-      points.push({ x: opt.points[i][0], y: opt.points[i][1] });
-    }
     datasets.push({
       label: opt.title,
-      data: points,
+      data: opt.votes,
       backgroundColor: "rgba(0,0,0,0)",
-      borderColor: OPAQUE[idx]
+      borderColor: OPAQUE[idx],
+      cubicInterpolationMode: "monotone"
     });
   }
+  snapshots = [];
+  json.snapshots.forEach(v => {
+    snapshots.push(parseSeconds(v));
+  });
   console.log(datasets);
   const chart = new Chart(ctx, {
     type: "line",
     data: {
-      labels: json.choices,
+      labels: snapshots,
       datasets
     }
   });

@@ -8,13 +8,15 @@ def infer_api_url(url: str) -> str:
         return 'invalid'
     # remove protocol, split into pieces
     slices = re.sub('^https://', '', url.strip()).split('/')
-    if slices[1:3] == ['web', 'statuses'] and slices[3].isdecimal():
+    if (len(slices) > 3 and
+            slices[1:3] == ['web', 'statuses'] and slices[3].isdecimal()):
         # mastodon
         return 'https://' + slices[0] + '/api/v1/statuses/' + slices[3]
-    elif re.match('^@\S+$', slices[1]) and slices[2].isdecimal():
+    elif (len(slices) > 2 and
+          re.match('^@\S+$', slices[1]) and slices[2].isdecimal()):
         # also mastodon
         return 'https://' + slices[0] + '/api/v1/statuses/' + slices[2]
-    elif slices[1] == 'notice' and slices[2].isalnum():
+    elif len(slices) > 2 and slices[1] == 'notice' and slices[2].isalnum():
         # pleroma
         pass
     return 'invalid'
