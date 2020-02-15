@@ -29,11 +29,18 @@ def get_instance_and_id_from_status_url(url: str) -> tuple:
     if not api_url == 'invalid':
         try:
             # GET api_url
-            res = requests.get(api_url).json()
-            if 'poll' in res and res['poll']:
+            res = requests.get(api_url)
+            if res.status_code == 404:
+                return ('404 not found', None)
+            elif not res.status_code == 200:
+                return ('not ok')
+
+            # make sure we get a 200
+            poll = res.json()
+            if 'poll' in poll and poll['poll']:
                 return (
                     url.split('/')[2],
-                    int(res['poll']['id']))
+                    int(poll['poll']['id']))
             return ('no poll', None)
         except Exception:
             print('Error occurred while GET\'ing ' + api_url)

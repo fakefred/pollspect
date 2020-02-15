@@ -22,7 +22,11 @@ def analyze(req):
         if key is None:
             instance, id = get_instance_and_id_from_status_url(url)
 
-            if instance == 'error':
+            if instance == '404 not found':
+                return Response('Poll does not exist or is deleted')
+            elif instance == 'not ok':
+                return Response('Error occurred while server made request.')
+            elif instance == 'error':
                 return Response('Error fetching URL')
             elif instance == 'invalid':
                 return Response('Invalid URL')
