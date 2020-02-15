@@ -38,9 +38,14 @@
     </p>
     <h3>Pollspecting</h3>
     <p>
-      Click "Pollspect". If the URL or key is correct and a poll is in there, a
+      Click "Pollspect". This is where it gets interesting. If the URL or key is
+      correct and a poll is in there, Pollspect's backend will look for a poll
+      with matching key/url. <br />If it finds one, it will give you its data. a
       line graph should appear below inside the black rectangle. The graph is in
-      a <code>&lt;canvas&gt;</code> element. You can save the image.
+      a <code>&lt;canvas&gt;</code> element. You can save the image. <br />Else,
+      the poll will be "subscribed". This means the backend will, from now on,
+      acquire the poll's data at an interval. Then the data will be shown, as a
+      single snapshot (x-axis) point. Remember to check out later.
     </p>
     <h3>From link</h3>
     <p>
