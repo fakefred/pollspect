@@ -16,6 +16,13 @@ except decoder.JSONDecodeError:
     dump({}, open('./subscriptions.json', 'w'))
     subscriptions = {}
 
+try:
+    with open('./archive.json', 'x') as f:
+        f.write('{}')
+        f.close()
+except FileExistsError:
+    pass
+
 
 def update_json():
     with open('./subscriptions.json', 'w') as f:
@@ -71,6 +78,17 @@ def subscribe_to_poll(instance: str, id: int, url: str) -> str:
 
 def find_poll_key_by_url(url: str) -> str:
     for k, v in subscriptions.items():
+        if v['url'] == url:
+            return k
+
+    # not in current subscriptions
+    # search in archive
+    return find_poll_key_in_archive_by_url(url)
+
+
+def find_poll_key_in_archive_by_url(url: str) -> str:
+    archive = load(open('./archive.json', 'r'))
+    for k, v in archive.items():
         if v['url'] == url:
             return k
     return None
