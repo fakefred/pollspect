@@ -2,10 +2,12 @@ from wsgiref.simple_server import make_server
 from pyramid.view import view_config
 from pyramid.config import Configurator
 from pyramid.response import Response
+from pyramid.httpexceptions import HTTPFound
 from fedi import *
 from polls import *
 from os import path
 from json import dumps
+from random import choice
 
 
 @view_config(route_name='index')
@@ -54,10 +56,18 @@ def analyze(req):
     return Response(dumps(analysis))
 
 
+@view_config(route_name='random')
+def random(req):
+    # randomly pick one key and redirect to it
+    raise HTTPFound(
+        location='/?key=' + choice(list(subscriptions.keys())))
+
+
 def start_server():
     with Configurator() as config:
         config.add_route('index', '/')
         config.add_route('analyze', '/analyze')
+        config.add_route('random', '/random')
         config.add_static_view(
             'static',
             path.join(path.dirname(__file__), 'static'))
