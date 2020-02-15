@@ -87,3 +87,13 @@ const makeChart = json => {
     }
   });
 };
+
+const parseParams = () => {
+  const params_str = window.location.search;
+  if (params_str.startsWith("?url=")) {
+    url_input.value = params_str.replace("?url=", "");
+    requestAnalysis();
+  }
+};
+
+parseParams();
