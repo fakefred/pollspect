@@ -57,7 +57,9 @@ const requestAnalysis = () => {
         console.log(json);
         makeChart(json);
         const href = `${window.location.origin}/?key=${json.key}`;
-        alert_div.innerHTML = `Use this link to view/share this pollspect: <a href="${href}">${href}</a>`;
+        alert_div.innerHTML = `Use this link to view/share this pollspect: 
+          <a href="${href}">${href}</a><br>
+          <a href="${json.url}">View poll</a>`;
       } catch {
         console.error(text);
         alert_div.innerHTML = text;
