@@ -1,6 +1,6 @@
 const plot = document.querySelector("#plot");
 const ctx = plot.getContext("2d");
-const url_input = document.querySelector("#url-input");
+const input = document.querySelector("#input");
 const alert_div = document.querySelector("#alert");
 
 const decoder = new TextDecoder("utf-8");
@@ -26,6 +26,7 @@ const parseSeconds = s => {
 const json = {
   generated_at: "2020-02-15 07:47:52",
   expires_in: "6 days, 6:24:53",
+  key: "mastodon.technology_21344",
   url: "https://mastodon.technology/web/statuses/103657607384494793",
   instance: "mastodon.technology",
   id: 21344,
@@ -42,7 +43,8 @@ const json = {
 
 const requestAnalysis = () => {
   console.log("requesting");
-  const req = new Request("/analyze?url=" + url_input.value);
+  const key = input.value.startsWith("https://") ? "url" : "key";
+  const req = new Request(`/analyze?${key}=` + input.value);
   alert_div.innerHTML = "Requesting...";
   fetch(req).then(res => {
     const reader = res.body.getReader();
@@ -54,6 +56,8 @@ const requestAnalysis = () => {
         alert_div.innerHTML = "";
         console.log(json);
         makeChart(json);
+        const href = `${window.location.origin}/?key=${json.key}`;
+        alert_div.innerHTML = `Use this link to view/share this pollspect: <a href="${href}">${href}</a>`;
       } catch {
         console.error(text);
         alert_div.innerHTML = text;
@@ -91,9 +95,11 @@ const makeChart = json => {
 const parseParams = () => {
   const params_str = window.location.search;
   if (params_str.startsWith("?url=")) {
-    url_input.value = params_str.replace("?url=", "");
-    requestAnalysis();
-  }
+    input.value = params_str.replace("?url=", "");
+  } else if (params_str.startsWith("?key=")) {
+    input.value = params_str.replace("?key=", "");
+  } else return;
+  requestAnalysis();
 };
 
 parseParams();

@@ -131,6 +131,7 @@ def analyze_poll(key: str):
 
     stats = {
         'generated_at': nowstring(),
+        'key': key,
         'expires_in': f'{d} days, {h}:{m}:{s}',
         'url': poll['url'],
         'instance': poll['instance'],

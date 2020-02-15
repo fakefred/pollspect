@@ -16,7 +16,13 @@ def index(req):
 
 @view_config(route_name='analyze')
 def analyze(req):
-    if 'url' in req.params:
+    key = None
+    if 'key' in req.params:
+        key = req.params['key']
+        if not key in subscriptions:
+            return Response('Key not found.')
+
+    elif 'url' in req.params:
         url = req.params['url']
         key = find_poll_key_by_url(url)
         if key is None:
@@ -34,8 +40,9 @@ def analyze(req):
                 return Response('No poll in this toot')
 
             key = genkey(instance, id)
+
     else:
-        return Response('No URL entered')
+        return Response('No URL or key entered')
 
     analysis = analyze_poll(key)
     if analysis == 'not subscribed':
