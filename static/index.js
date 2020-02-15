@@ -22,7 +22,7 @@ const parseSeconds = s => {
   return `${d}d, ${h}:${m < 10 ? `0${m}` : m}:${s < 10 ? `0${s}` : s}`;
 };
 
-/* sample response json*/
+/* sample response json
 const json = {
   generated_at: "2020-02-15 07:47:52",
   expires_in: "6 days, 6:24:53",
@@ -38,7 +38,7 @@ const json = {
     { title: "Freddiecat :freddiecat:", votes: [0, 0, 0, 0, 1, 1, 1, 1, 1] }
   ]
 };
-/**/
+*/
 
 const requestAnalysis = () => {
   console.log("requesting");
