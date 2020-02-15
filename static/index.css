@@ -1,19 +1,19 @@
 body {
-    text-align: center;
-    margin: 0;
+  text-align: center;
+  margin: 0;
 }
 
 #plot-container {
-    position: relative;
-    width: 80%;
-    left: 10%;
-    border: 2px solid black;
+  position: relative;
+  width: 80%;
+  left: 10%;
+  border: 2px solid black;
 }
 
 #input {
-    width: 40em;
+  width: 40em;
 }
 
 #alert {
-    color: tomato;
+  color: tomato;
 }

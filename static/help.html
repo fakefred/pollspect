@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pollspect</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/static/index.css" />
+    <link rel="icon" href="/static/favicon.png" />
+  </head>
+  <body style="margin-left: 20%; margin-right: 20%;">
+    <h1>Help for Pollspect</h1>
+    <a href="/">Back to Main</a>
+    <hr />
+
+    <h2>What is Pollspect for?</h2>
+    <p>
+      Pollspect is a data visualization tool for Mastodon polls, added in
+      v2.8.0. Pollspect automatically requests for live poll data and saves
+      them, so that the snapshots can be used to generate cool graphs. Currently
+      only line graphs naïvely denoting "how many votes, over time" are
+      supported. More will come, but only with help from you. See
+      &sect;Contributing.
+    </p>
+
+    <h2>Usage</h2>
+    <h3>From toot URL</h3>
+    <p>
+      Paste URL of a toot containing a poll, such as
+      <code>https://mastodon.technology/web/statuses/103657607384494793</code>
+      into the textbox on the index page.
+    </p>
+    <h3>From key</h3>
+    <p>
+      A "key" is an identifier Pollspect uses to index polls. An example is
+      "mastodon.technology_21344". It consists of the instance the poll is on,
+      and the poll's id provided by Mastodon's REST API (endpoint
+      <code>/api/v1/polls/id</code>). A link to a poll will be provided under
+      the textbox when viewing the poll, which will contain the key.
+    </p>
+    <h3>Pollspecting</h3>
+    <p>
+      Click "Pollspect". If the URL or key is correct and a poll is in there, a
+      line graph should appear below inside the black rectangle. The graph is in
+      a <code>&lt;canvas&gt;</code> element. You can save the image.
+    </p>
+    <h3>From link</h3>
+    <p>
+      The link obtained from Pollspect will stay available as long as the poll
+      is not expired. After that, you will have to access the poll stats via the
+      two methods above. #FIXME
+    </p>
+
+    <h2>Contributing</h2>
+    <p>
+      Pollspect is licensed under GPLv3 on
+      <a href="https://github.com/fakefred/pollspect">GitHub</a>. Issues and
+      PR's are welcome. The author is trapped at home because of COVID-19.
+    </p>
+  </body>
+</html>
