@@ -3,6 +3,7 @@ const ctx = plot.getContext("2d");
 const input = document.querySelector("#input");
 const alert_div = document.querySelector("#alert");
 const interval_picker = document.querySelector("#interval");
+const interval_label = document.querySelector("#interval-label");
 
 const decoder = new TextDecoder("utf-8");
 
@@ -59,9 +60,12 @@ const requestAnalysis = () => {
       console.log(text);
       try {
         const json = JSON.parse(text);
+        // proceed if response is valid json
         alert_div.innerHTML = "";
         console.log(json);
         makeChart(json);
+        interval_label.hidden = true;
+        interval_picker.hidden = true;
         const href = `${window.location.origin}/?key=${json.key}`;
         alert_div.innerHTML = `Use this link to view/share this pollspect: 
           <a href="${href}">${href}</a><br>
@@ -86,7 +90,7 @@ const makeChart = json => {
       cubicInterpolationMode: "monotone"
     });
   }
-  
+
   console.log(datasets);
   const chart = new Chart(ctx, {
     type: "line",
