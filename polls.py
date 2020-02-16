@@ -172,9 +172,7 @@ def analyze_poll(key: str):
 
     # stuff in snapshot time and votes
     for timestr, votes in poll['snapshots'].items():
-        stats['snapshots'].append(
-            (parser.parse(timestr) -
-             parser.parse(poll['subscribed_at'])).seconds)
+        stats['snapshots'].append(timestr)
         for idx, count in enumerate(votes):
             stats['choices'][idx]['votes'].append(count)
 

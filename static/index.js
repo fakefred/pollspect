@@ -15,6 +15,7 @@ const OPAQUE = [
   "rgba(255, 159, 64, 1)"
 ];
 
+/*
 const parseSeconds = s => {
   d = Math.floor(s / 86400);
   h = Math.floor(s / 3600) - d * 24;
@@ -22,6 +23,7 @@ const parseSeconds = s => {
   s = s % 60;
   return `${d}d, ${h}:${m < 10 ? `0${m}` : m}:${s < 10 ? `0${s}` : s}`;
 };
+*/
 
 /* sample response json
 const json = {
@@ -84,15 +86,12 @@ const makeChart = json => {
       cubicInterpolationMode: "monotone"
     });
   }
-  snapshots = [];
-  json.snapshots.forEach(v => {
-    snapshots.push(parseSeconds(v));
-  });
+  
   console.log(datasets);
   const chart = new Chart(ctx, {
     type: "line",
     data: {
-      labels: snapshots,
+      labels: json.snapshots,
       datasets
     },
     options: {
