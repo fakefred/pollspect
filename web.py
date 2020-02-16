@@ -67,11 +67,18 @@ def random(req):
         location='/?key=' + choice(list(subscriptions.keys())))
 
 
+@view_config(route_name='list')
+def list_polls(req):
+    # responds with a list of all subscribed polls
+    return Response(dumps(list_subscribed_polls()))
+
+
 def start_server():
     with Configurator() as config:
         config.add_route('index', '/')
         config.add_route('analyze', '/analyze')
         config.add_route('random', '/random')
+        config.add_route('list', '/list')
         config.add_static_view(
             'static',
             path.join(path.dirname(__file__), 'static'))

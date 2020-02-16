@@ -4,6 +4,8 @@ const input = document.querySelector("#input");
 const alert_div = document.querySelector("#alert");
 const interval_picker = document.querySelector("#interval");
 const interval_label = document.querySelector("#interval-label");
+const list = document.querySelector("#list");
+const list_label = document.querySelector("#list-label");
 
 const decoder = new TextDecoder("utf-8");
 
@@ -46,6 +48,29 @@ const json = {
 };
 */
 
+const retrieveList = () => {
+  const req = new Request(`/list`);
+  fetch(req).then(res => {
+    const reader = res.body.getReader();
+    reader.read().then(({ done, value }) => {
+      const text = decoder.decode(value);
+      console.log(text);
+      try {
+        const json = JSON.parse(text);
+        let html = "";
+        json.forEach(v => {
+          html += `<li><a href="/?key=${v.key}">${v.key}</a> | View poll: <a href="${v.url}">${v.url}</a></li>`;
+        });
+        list.innerHTML = html;
+      } catch {
+        console.error(text);
+      }
+    });
+  });
+};
+
+retrieveList();
+
 const requestAnalysis = () => {
   console.log("requesting");
   const key = input.value.startsWith("https://") ? "url" : "key";
@@ -70,7 +95,7 @@ const requestAnalysis = () => {
         const href = `${window.location.origin}/?key=${json.key}`;
         alert_div.innerHTML = `Use this link to view/share this pollspect: 
           <a href="${href}">${href}</a><br>
-          <a href="${json.url}">View poll</a>`;
+          <a href="${json.url}">View poll on Mastodon</a>`;
 
         if (json.expired) {
           alert_div.innerHTML +=

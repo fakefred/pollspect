@@ -143,6 +143,12 @@ def poll_poll(key: str) -> str:
     return 'success'
 
 
+def list_subscribed_polls() -> list:
+    return [
+        {'key': k, 'url': v['url']}
+        for k, v in subscriptions.items()]
+
+
 def analyze_poll(key: str):
     # analyze a certain poll for frontend visualization
     if key in subscriptions:
