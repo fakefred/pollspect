@@ -122,10 +122,15 @@ def poll_all_polls():
 
 def analyze_poll(key: str):
     # analyze a certain poll for frontend visualization
-    if not key in subscriptions:
-        return 'not subscribed'
+    if key in subscriptions:
+        poll = subscriptions[key]
+    else:
+        archive = load(open('./archive.json', 'r'))
+        if key in archive:
+            poll = archive[key]
+        else:
+            return 'not found'
 
-    poll = subscriptions[key]
     d, h, m, s = humanify_timedelta(
         expires_in(poll['expires_at']))
 

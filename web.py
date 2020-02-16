@@ -21,8 +21,6 @@ def analyze(req):
     key = None
     if 'key' in req.params:
         key = req.params['key']
-        if not key in subscriptions:
-            return Response('Key not found.')
 
     elif 'url' in req.params:
         url = req.params['url']
@@ -33,7 +31,7 @@ def analyze(req):
             if instance == '404 not found':
                 return Response('Poll does not exist or is deleted')
             elif instance == 'not ok':
-                return Response('Error occurred while server made request.')
+                return Response('Error occurred while server made request')
             elif instance == 'error':
                 return Response('Error fetching URL')
             elif instance == 'invalid':
@@ -47,7 +45,7 @@ def analyze(req):
         return Response('No URL or key entered')
 
     analysis = analyze_poll(key)
-    if analysis == 'not subscribed':
+    if analysis == 'not found':
         sub_status = subscribe_to_poll(instance, id, url)
         if sub_status == 'expired':
             return Response('Poll expired')
