@@ -18,15 +18,26 @@ def expires_in(timestr: str):
 
 
 def humanify_timedelta(timedelta):
-    # timedelta natively provides
+    # timedelta natively provides days and seconds
+    # could be negative though
     d, s = timedelta.days, timedelta.seconds
     h = s // 3600
     m = s // 60 - h * 60
     s = s % 60
-    return (d, h, m, s)
+
+    outstr = ''
+    if d > 0:
+        outstr += str(d) + ' days, '
+
+    outstr += two_digit(h) + ':' + two_digit(m) + ':' + two_digit(s)
+    return outstr
 
 
 def nowstring():
     # YYYY-MM-DD HH:MM:SS
     # removes microseconds and timezone
     return str(datetime.now(tz=timezone.utc))[:19]
+
+
+def two_digit(n: int) -> str:
+    return str(n) if n > 9 else '0' + str(n)

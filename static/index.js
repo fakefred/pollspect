@@ -29,6 +29,7 @@ const parseSeconds = s => {
 /* sample response json
 const json = {
   generated_at: "2020-02-15 07:47:52",
+  expired: false,
   expires_in: "6 days, 6:24:53",
   key: "mastodon.technology_21344",
   url: "https://mastodon.technology/web/statuses/103657607384494793",
@@ -70,6 +71,14 @@ const requestAnalysis = () => {
         alert_div.innerHTML = `Use this link to view/share this pollspect: 
           <a href="${href}">${href}</a><br>
           <a href="${json.url}">View poll</a>`;
+
+        if (json.expired) {
+          alert_div.innerHTML +=
+            "<br> This poll is expired. You are viewing archived data.";
+        } else {
+          alert_div.innerHTML +=
+            "<br> This poll will expire in " + json.expires_in;
+        }
       } catch {
         console.error(text);
         alert_div.innerHTML = text;

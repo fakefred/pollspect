@@ -147,18 +147,18 @@ def analyze_poll(key: str):
     # analyze a certain poll for frontend visualization
     if key in subscriptions:
         poll = subscriptions[key]
+        expired = False
     else:
         poll = find_poll_in_archive(key)
         if poll is None:
             return 'not found'
-
-    d, h, m, s = humanify_timedelta(
-        expires_in(poll['expires_at']))
+        expired = True
 
     stats = {
         'generated_at': nowstring(),
         'key': key,
-        'expires_in': f'{d} days, {h}:{m}:{s}',
+        'expired': expired,
+        'expires_in': humanify_timedelta(expires_in(poll['expires_at'])),
         'url': poll['url'],
         'instance': poll['instance'],
         'id': poll['id'],
