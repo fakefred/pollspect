@@ -52,10 +52,13 @@ def get_poll_by_id(instance: str, id: int) -> dict:
     # just barely smart enough to add protocol
     # and remove redundant slashes
     try:
-        return requests.get(('https://'
-                             if not re.match('^https://', instance.strip())
-                             else '') + instance.strip('/') +
-                            '/api/v1/polls/' + str(id)).json()
+        req = requests.get(('https://'
+                            if not re.match('^https://', instance.strip())
+                            else '') + instance.strip('/') +
+                           '/api/v1/polls/' + str(id))
+        if not req.status_code == 200:
+            return req.status_code
+        return req.json()
     except Exception:
         print('Error occurred while GET\'ing poll #' +
               str(id) + ' on instance ' + instance)

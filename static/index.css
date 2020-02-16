@@ -15,5 +15,9 @@ body {
 }
 
 #alert {
+  position: relative;
   color: tomato;
+  margin-left: -20em;
+  width: 40em;
+  left: 50%;
 }

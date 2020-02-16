@@ -19,8 +19,22 @@
       <form action="/random" style="display: inline;">
         <input type="submit" value="I'm feeling lucky" />
       </form>
+      <br />
+      <form>
+        <label for="interval">Interval between snapshots:</label>
+        <select id="interval">
+          <option value="5">5 minutes</option>
+          <option value="10">10 minutes</option>
+          <option value="30" selected>30 minutes</option>
+          <option value="60">1 hour</option>
+          <option value="120">2 hours</option>
+          <option value="360">6 hours</option>
+          <option value="720">12 hours</option>
+          <option value="1440">24 hours</option>
+        </select>
+      </form>
 
-      <div id="alert"></div>
+      <p id="alert"></p>
     </div>
     <br />
     <div id="plot-container">

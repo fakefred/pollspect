@@ -21,6 +21,8 @@ def analyze(req):
     key = None
     if 'key' in req.params:
         key = req.params['key']
+        if not key in subscriptions and find_poll_in_archive(key) is None:
+            return Response('Poll data not found')
 
     elif 'url' in req.params:
         url = req.params['url']
@@ -44,11 +46,15 @@ def analyze(req):
     else:
         return Response('No URL or key entered')
 
+    intv = int(req.params['interval']) if 'interval' in req.params else 30
+
     analysis = analyze_poll(key)
     if analysis == 'not found':
-        sub_status = subscribe_to_poll(instance, id, url)
+        sub_status = subscribe_to_poll(instance, id, url, intv=intv)
         if sub_status == 'expired':
             return Response('Poll expired')
+        elif sub_status == 404:
+            return Response('Poll not found')
         analysis = analyze_poll(key)
 
     return Response(dumps(analysis))

@@ -23,6 +23,10 @@ try:
 except FileExistsError:
     pass
 
+scheduler = BackgroundScheduler()
+scheduler.start()
+# we will add jobs as new polls are to be subscribed
+
 
 def update_json():
     with open('./subscriptions.json', 'w') as f:
@@ -49,19 +53,22 @@ def move_to_archive(key: str):
     update_json()
 
 
-def subscribe_to_poll(instance: str, id: int, url: str) -> str:
+def subscribe_to_poll(instance: str, id: int, url: str, intv=30) -> str:
     key = genkey(instance, id)
     if not key in subscriptions:
         # fetch poll
         poll = get_poll_by_id(instance, id)
         if not poll:
             return 'no poll'
+        elif poll == 404:
+            return '404 not found'
         elif poll['expired']:
             return 'expired'
 
         # create a subscription
         subscriptions[key] = {
             'subscribed_at': nowstring(),
+            'interval': intv,
             'expires_at': poll['expires_at'],
             'url': url,
             'instance': sanitize_instance(instance),
@@ -72,6 +79,11 @@ def subscribe_to_poll(instance: str, id: int, url: str) -> str:
         }
         update_json()
         poll_poll(key)
+        # add a scheduled job
+        # id is used as an identifier
+        scheduler.add_job(
+            poll_poll, args=[key], trigger='interval', minutes=intv, id=key)
+
         return 'success'
     return 'already subscribed'
 
@@ -84,6 +96,13 @@ def find_poll_key_by_url(url: str) -> str:
     # not in current subscriptions
     # search in archive
     return find_poll_key_in_archive_by_url(url)
+
+
+def find_poll_in_archive(key: str) -> dict:
+    archive = load(open('./archive.json', 'r'))
+    if key in archive:
+        return archive[key]
+    return None
 
 
 def find_poll_key_in_archive_by_url(url: str) -> str:
@@ -103,21 +122,25 @@ def poll_poll(key: str) -> str:
     poll = get_poll_by_id(sub_info['instance'], sub_info['id'])
     if not poll:
         return 'no poll'
+    elif poll == 404:
+        # API returns 404; poll DNE or is deleted.
+        # In this case, since poll must have been in existence
+        # in order for the subscriber to invoke this method.
+        # Trigger job removal.
+        move_to_archive(key)
+        scheduler.remove_job(key)
+        return 'deleted'
     elif poll['expired']:
         move_to_archive(key)
+        scheduler.remove_job(key)  # stop polling this
         return 'expired'
 
     # save as {'snapshot': {<datetime>: [0, 1, 2, 3]}}
+    # the array representing votes for each choice
     subscriptions[key]['snapshots'][nowstring()] = [opt['votes_count']
                                                     for opt in poll['options']]
     update_json()
     return 'success'
-
-
-def poll_all_polls():
-    # helper method
-    for key in subscriptions.keys():
-        poll_poll(key)
 
 
 def analyze_poll(key: str):
@@ -125,10 +148,8 @@ def analyze_poll(key: str):
     if key in subscriptions:
         poll = subscriptions[key]
     else:
-        archive = load(open('./archive.json', 'r'))
-        if key in archive:
-            poll = archive[key]
-        else:
+        poll = find_poll_in_archive(key)
+        if poll is None:
             return 'not found'
 
     d, h, m, s = humanify_timedelta(
@@ -160,8 +181,9 @@ def analyze_poll(key: str):
     return stats
 
 
-def schedule_poll(seconds=300):
-    # create interval scheduler
-    sch = BackgroundScheduler()
-    sch.add_job(poll_all_polls, 'interval', seconds=seconds)
-    sch.start()
+for k, s in subscriptions.items():
+    # when pollspect launches,
+    # automatically resume all pre-scheduled jobs
+    scheduler.add_job(
+        poll_poll, args=[k], id=k,
+        trigger='interval', minutes=s['interval'])

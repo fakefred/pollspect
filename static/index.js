@@ -2,6 +2,7 @@ const plot = document.querySelector("#plot");
 const ctx = plot.getContext("2d");
 const input = document.querySelector("#input");
 const alert_div = document.querySelector("#alert");
+const interval_picker = document.querySelector("#interval");
 
 const decoder = new TextDecoder("utf-8");
 
@@ -44,7 +45,10 @@ const json = {
 const requestAnalysis = () => {
   console.log("requesting");
   const key = input.value.startsWith("https://") ? "url" : "key";
-  const req = new Request(`/analyze?${key}=` + input.value);
+  const interval = interval_picker.value;
+  const req = new Request(
+    `/analyze?${key}=${input.value}&interval=${interval}`
+  );
   alert_div.innerHTML = "Requesting...";
   fetch(req).then(res => {
     const reader = res.body.getReader();
@@ -90,6 +94,9 @@ const makeChart = json => {
     data: {
       labels: snapshots,
       datasets
+    },
+    options: {
+      scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
     }
   });
 };
@@ -98,10 +105,12 @@ const parseParams = () => {
   const params_str = window.location.search;
   if (params_str.startsWith("?url=")) {
     input.value = params_str.replace("?url=", "");
+    alert_div.innerHTML =
+      "If you came from a link someone else posted, just click Pollspect. <br><br> If you typed the url manually and the URL contained a poll not yet in Pollspect's database, select Snapshot Interval before clicking Pollspect if you wish Pollspect to subscribe to the new poll. In this case, please be considerate for the admins of the instance. API requests cost. If the poll lasts longer than a day, select an interval no shorter than 30 minutes.";
   } else if (params_str.startsWith("?key=")) {
     input.value = params_str.replace("?key=", "");
-  } else return;
-  requestAnalysis();
+    requestAnalysis();
+  }
 };
 
 parseParams();
