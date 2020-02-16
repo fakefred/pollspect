@@ -76,8 +76,11 @@ const requestAnalysis = () => {
           alert_div.innerHTML +=
             "<br> This poll is expired. You are viewing archived data.";
         } else {
-          alert_div.innerHTML +=
-            "<br> This poll will expire in " + json.expires_in;
+          const interval =
+            json.interval >= 120
+              ? json.interval / 60 + " hours"
+              : json.interval + " minutes";
+          alert_div.innerHTML += `<br> This poll will expire in ${json.expires_in}. Votes are refreshed every ${interval}.`;
         }
       } catch {
         console.error(text);

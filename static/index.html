@@ -21,7 +21,9 @@
       </form>
       <br />
       <form>
-        <label id="interval-label" for="interval">Interval between snapshots:</label>
+        <label id="interval-label" for="interval"
+          >Interval between snapshots:</label
+        >
         <select id="interval">
           <option value="5">5 minutes</option>
           <option value="10">10 minutes</option>
@@ -34,7 +36,13 @@
         </select>
       </form>
 
-      <p id="alert"></p>
+      <p id="alert">
+        If the toot's URL contain a poll not yet in Pollspect's database, select
+        Snapshot Interval before clicking Pollspect if you wish Pollspect to
+        subscribe to the new poll. In this case, please be considerate for the
+        admins of the instance. API requests cost. If the poll lasts longer than
+        a day, select an interval no shorter than 30 minutes.
+      </p>
     </div>
     <br />
     <div id="plot-container">

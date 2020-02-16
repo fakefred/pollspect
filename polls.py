@@ -156,6 +156,7 @@ def analyze_poll(key: str):
 
     stats = {
         'generated_at': nowstring(),
+        'interval': poll['interval'],
         'key': key,
         'expired': expired,
         'expires_in': humanify_timedelta(expires_in(poll['expires_at'])),
