@@ -46,7 +46,12 @@ def analyze(req):
     else:
         return Response('No URL or key entered')
 
-    intv = int(req.params['interval']) if 'interval' in req.params else 30
+    intv = (int(req.params['interval'])
+            if 'interval' in req.params
+            and req.params['interval'].isdecimal()
+            else 30)  # interval in minutes
+
+    intv = 5 if intv < 5 else intv  # set minimum
 
     analysis = analyze_poll(key)
     if analysis == 'not found':
